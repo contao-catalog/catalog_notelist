@@ -25,5 +25,9 @@
 $GLOBALS['TL_LANG']['notelistvariants']['amount'] = 'Amount';
 $GLOBALS['TL_LANG']['notelistvariants']['addlabel'] = 'Add to notelist';
 $GLOBALS['TL_LANG']['notelistvariants']['itemadded'] = 'The item has been added to your notelist.';
+$GLOBALS['TL_LANG']['notelistvariants']['removeLabel'] = 'Remove';
+$GLOBALS['TL_LANG']['notelistvariants']['updateLabel'] = 'Update';
+$GLOBALS['TL_LANG']['notelistvariants']['emptyLabel'] = '-';
+$GLOBALS['TL_LANG']['notelistvariants']['pleaseSelect'] = 'Please select';
 
 ?>
