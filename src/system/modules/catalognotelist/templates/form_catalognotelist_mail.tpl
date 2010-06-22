@@ -10,6 +10,7 @@
 <?php echo $this->description; ?>
 <?php endif; ?>
 <?php foreach($this->items as $item): ?>
+<?php echo $item['amount']; ?> x 
 <?php foreach($item['fields'] as $k=>$field): ?>
 <?php echo $field['title']; ?>: <?php echo $field['value']['raw']; ?> 
 <?php endforeach; ?>
@@ -19,4 +20,3 @@
 
 <?php endforeach; ?>
 <?php endforeach; ?>
-<?php echo $this->amount; ?>
