@@ -32,9 +32,8 @@
 $GLOBALS['TL_DCA']['tl_catalog_fields']['fields']['type']['options'][] = 'notelistvariants';
 
 // sub palette
-$GLOBALS['TL_DCA']['tl_catalog_fields']['palettes']['notelistvariants'] = '{title_legend},name,description,colName,type,notelistvariants;{display_legend},insertBreak,width50';
+$GLOBALS['TL_DCA']['tl_catalog_fields']['palettes']['notelistvariants'] = '{title_legend},name,description,colName,type,notelistvariants,notelistselamount;{display_legend},insertBreak,width50';
 
-// register our fieldtype editor to the catalog Fields
 $GLOBALS['TL_DCA']['tl_catalog_fields']['fields']['notelistvariants'] = array
 (
 	'label'         => &$GLOBALS['TL_LANG']['tl_catalog_fields']['notelistvariants'],
@@ -43,11 +42,14 @@ $GLOBALS['TL_DCA']['tl_catalog_fields']['fields']['notelistvariants'] = array
 	'options_callback'        => array('tl_catalog_fields', 'getOptionSelectors'),
 	'eval'      => array
 	(
-		'doNotSaveEmpty' => true,
 		'multiple' => true
 	)
 );
-
-
+$GLOBALS['TL_DCA']['tl_catalog_fields']['fields']['notelistselamount'] = array
+(
+	'label'         => &$GLOBALS['TL_LANG']['tl_catalog_fields']['notelistselamount'],
+	'exclude'       => true,
+	'inputType'               => 'checkbox',
+);
 
 ?>

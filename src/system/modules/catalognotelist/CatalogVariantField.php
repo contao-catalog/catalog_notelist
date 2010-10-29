@@ -34,7 +34,7 @@ class CatalogVariantField extends Frontend
 		if(!$objCatalog)
 			return array('items'=>$items, 'values'=>false, 'html'=>'');
 
-		
+
 		$this->Template=new FrontendTemplate('catalog_notelistfield');
 		$formid='notelist_'.$objCatalog->pid.'_'.$objCatalog->id;
 		$this->Template->formid=$formid;
@@ -49,13 +49,14 @@ class CatalogVariantField extends Frontend
 		$data=$objCatalog->row();
 		$items['variants']=array();
 		$submitOk=$this->Input->post('FORM_SUBMIT')==$formid;
-		
+
 		// find out what options we want to provide.
 		$objFieldConf=$this->Database->prepare('SELECT *,(SELECT tableName FROM tl_catalog_types WHERE id=?) AS tableName FROM tl_catalog_fields WHERE pid=? AND colName=?')->execute($objCatalog->pid, $objCatalog->pid, $fieldname);
 		$desiredOptions=deserialize($objFieldConf->notelistvariants);
+		if(!$desiredOptions)
+			$desiredOptions=array('');
 		// determine foreign key values.
 		$objVariantValues=$this->Database->prepare('SELECT * FROM tl_catalog_fields WHERE pid=? AND colName IN (\''.implode('\',\'', $desiredOptions).'\')')->execute($objCatalog->pid);
-
 		$arrData=array('eval'=> array('rgxp' => 'digit'));
 		// generate widgets and everything else for all the variants.
 		while($objVariantValues->next())
@@ -97,15 +98,18 @@ class CatalogVariantField extends Frontend
 			$items['variants'][$objVariantValues->colName]['objWidget']=$objVariantWidget;
 			$items['variants'][$objVariantValues->colName]['optioncount']=count($options);
 		}
-		$this->Template->variants=$items['variants'];
-		// amount widget
-		$id=$formid.'_amount';
-		$arrData=array('label'=>&$GLOBALS['TL_LANG']['notelistvariants']['amount'],'eval'=>array('rgxp' => 'digit', 'mandatory'=>true));
-		$amount=(strlen($this->Input->post($id))?$this->Input->post($id):'1');
-		$objAmountWidget=new FormTextField($this->prepareForWidget($arrData, $id, $amount, $id, $formid));
-		if($submitOk && $objAmountWidget->validate() && $objAmountWidget->hasErrors())$submitOk=false;
-		$this->Template->amount='<div class="notelistamount">' . $objAmountWidget->parse(array('tableless' => true)) . '</div>';
 
+		$this->Template->variants=$items['variants'];
+		if($this->notelistselamount)
+		{
+			// amount widget
+			$id=$formid.'_amount';
+			$arrData=array('label'=>&$GLOBALS['TL_LANG']['notelistvariants']['amount'],'eval'=>array('rgxp' => 'digit', 'mandatory'=>true));
+			$amount=(strlen($this->Input->post($id))?$this->Input->post($id):'1');
+			$objAmountWidget=new FormTextField($this->prepareForWidget($arrData, $id, $amount, $id, $formid));
+			if($submitOk && $objAmountWidget->validate() && $objAmountWidget->hasErrors())$submitOk=false;
+			$this->Template->amount='<div class="notelistamount">' . $objAmountWidget->parse(array('tableless' => true)) . '</div>';
+		}
 		if($submitOk)
 		{
 			// form submit ok, we want to add to notelist now.
@@ -161,7 +165,7 @@ class CatalogVariantField extends Frontend
 		return array
 				(
 				 	'items'	=> $items,
-					'values' => false,
+					'values' => true,
 				 	'html'  => $this->Template->parse(),
 				);
 	}

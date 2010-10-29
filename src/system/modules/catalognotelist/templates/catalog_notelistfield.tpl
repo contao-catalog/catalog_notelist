@@ -26,7 +26,9 @@
 <?php echo $this->description; ?>
 <?php endif; ?>
 </div>
+<?php if($this->amount): ?>
 <?php echo $this->amount; ?>
+<?php endif; ?>
 <input type="submit" class="submit" value="<?php echo $this->addSumbit; ?>" />
 </div>
 </form>

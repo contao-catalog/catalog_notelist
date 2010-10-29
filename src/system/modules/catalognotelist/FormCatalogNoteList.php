@@ -1,21 +1,6 @@
 <?php if (!defined('TL_ROOT')) die('You can not access this file directly!');
 
 /**
- * TYPOlight webCMS
- *
- * The TYPOlight webCMS is an accessible web content management system that 
- * specializes in accessibility and generates W3C-compliant HTML code. It 
- * provides a wide range of functionality to develop professional websites 
- * including a built-in search engine, form generator, file and user manager, 
- * CSS engine, multi-language support and many more. For more information and 
- * additional TYPOlight applications like the TYPOlight MVC Framework please 
- * visit the project website http://www.typolight.org.
- * 
- * The Catalog extension allows the creation of multiple catalogs of custom items,
- * each with its own unique set of selectable field types, with field extendability.
- * The Front-End modules allow you to build powerful listing and filtering of the 
- * data in each catalog.
- * 
  * PHP version 5
  * @copyright   Christian Schiffler 2010
  * @author      Christian Schiffler  <c.schiffler@cyberspectrum.de> 
@@ -23,9 +8,6 @@
  * @license		LGPL 
  * @filesource
  */
-
-
-
 
 /**
  * Class InternalModuleCatalogNotelist
@@ -186,24 +168,31 @@ class FormCatalogNoteList extends Widget
 		{
 			$ids[]=$item['id'];
 			$widgetBaseId=$this->strId.'_'.$item['id'];
-			foreach($item['variants'] as $variantId=>$variant)
+			if(is_array($item['variants']))
 			{
-				$widgetBaseId.='_'.$variant['id'];
+				foreach($item['variants'] as $variantId=>$variant)
+				{
+					$widgetBaseId.='_'.$variant['id'];
+				}
 			}
-			// amount edit field per item
-			$id=$widgetBaseId.'_amount';
-			$arrData=array('label'=>&$GLOBALS['TL_LANG']['notelistvariants']['amount'],'eval'=>array('rgxp' => 'digit', 'mandatory'=>true));
-			$amount=(strlen($this->Input->post($id))?$this->Input->post($id):$items[$itemIndex]['amount']);
-			$objAmountWidget=new FormTextField($this->prepareForWidget($arrData, $id, $amount, $id, $formid));
-			if(strlen($this->Input->post($id)) && $objAmountWidget->validate() && $objAmountWidget->hasErrors()){}
-			$items[$itemIndex]['input_amount']='<div class="notelistamount">' . $objAmountWidget->parse(array('tableless' => true)) . '</div>';
-			// update amount button per item
-			$id=$widgetBaseId.'_updateamount';
-			$arrData=array('label'=>&$GLOBALS['TL_LANG']['notelistvariants']['updateamount'],'eval'=>array('rgxp' => 'digit', 'mandatory'=>true));
-			$arrData=array();
-			$objUpdateAmountWidget=new FormSubmit($this->prepareForWidget($arrData, $id, '', $id, $formid));
-			$objUpdateAmountWidget->slabel=$GLOBALS['TL_LANG']['notelistvariants']['updateLabel'];
-			$items[$itemIndex]['input_update']='<div class="notelistupdateamount">' . $objUpdateAmountWidget->parse(array('tableless' => true)) . '</div>';
+			// only when an amount has been specified, we allow the user to specify another one.
+			if($items[$itemIndex]['amount'])
+			{
+				// amount edit field per item
+				$id=$widgetBaseId.'_amount';
+				$arrData=array('label'=>&$GLOBALS['TL_LANG']['notelistvariants']['amount'],'eval'=>array('rgxp' => 'digit', 'mandatory'=>true));
+				$amount=(strlen($this->Input->post($id))?$this->Input->post($id):$items[$itemIndex]['amount']);
+				$objAmountWidget=new FormTextField($this->prepareForWidget($arrData, $id, $amount, $id, $formid));
+				if(strlen($this->Input->post($id)) && $objAmountWidget->validate() && $objAmountWidget->hasErrors()){}
+				$items[$itemIndex]['input_amount']='<div class="notelistamount">' . $objAmountWidget->parse(array('tableless' => true)) . '</div>';
+				// update amount button per item
+				$id=$widgetBaseId.'_updateamount';
+				$arrData=array('label'=>&$GLOBALS['TL_LANG']['notelistvariants']['updateamount'],'eval'=>array('rgxp' => 'digit', 'mandatory'=>true));
+				$arrData=array();
+				$objUpdateAmountWidget=new FormSubmit($this->prepareForWidget($arrData, $id, '', $id, $formid));
+				$objUpdateAmountWidget->slabel=$GLOBALS['TL_LANG']['notelistvariants']['updateLabel'];
+				$items[$itemIndex]['input_update']='<div class="notelistupdateamount">' . $objUpdateAmountWidget->parse(array('tableless' => true)) . '</div>';
+			}
 			// remove from notelist button
 			$id=$widgetBaseId.'_remove';
 			$arrData=array();
@@ -237,6 +226,7 @@ class FormCatalogNoteList extends Widget
 		$objTemplate=new FrontendTemplate($strTemplate);
 		$objTemplate->description=strip_tags($this->text);
 		$objTemplate->items=$items;
+		$objTemplate->strId='ctrl_'.$this->id;
 		
 		return $objTemplate->parse();
 	}
@@ -254,7 +244,10 @@ class FormCatalogNoteList extends Widget
 			$objTemplate->title = $this->headline;
 			$objTemplate->id = $this->id;
 			$objTemplate->link = $this->name;
-
+			if (version_compare(VERSION.'.'.BUILD, '2.9.0', '>='))
+				$objTemplate->href = 'contao/main.php?do=form&amp;table=tl_form_field&amp;act=edit&amp;id=' . $this->id;
+			else
+				$objTemplate->href = 'typolight/main.php?do=form&amp;table=tl_form_field&amp;act=edit&amp;id=' . $this->id;
 			return $objTemplate->parse();
 		}
 		return $this->calculateValue();
@@ -285,21 +278,25 @@ class FormCatalogNoteList extends Widget
 				unset($items[$k]);
 				$notelistModified=true;
 			} else {
-				// validate amounts, might got changed in input.
-				$id=$widgetBaseId.'_amount';
-				$amount=(strlen($this->Input->post($id))?$this->Input->post($id):$items[$k]['amount']);
-				$arrData=array('eval'=>array('rgxp' => 'digit', 'mandatory'=>true));
-				$objAmountWidget=new FormTextField($this->prepareForWidget($arrData, $id, $amount, $id, $formid));
-				$objAmountWidget->validate();
-				if($objAmountWidget->hasErrors())
+				// only when an amount has been specified, we allow the user to specify another one.
+				if($items[$k]['amount'])
 				{
-					$this->class = 'error';
-					$this->addError('');
-				} else {
-					if($items[$k]['amount']!=$objAmountWidget->value)
+					// validate amounts, might got changed in input.
+					$id=$widgetBaseId.'_amount';
+					$amount=(strlen($this->Input->post($id))?$this->Input->post($id):$items[$k]['amount']);
+					$arrData=array('eval'=>array('rgxp' => 'digit', 'mandatory'=>true));
+					$objAmountWidget=new FormTextField($this->prepareForWidget($arrData, $id, $amount, $id, $formid));
+					$objAmountWidget->validate();
+					if($objAmountWidget->hasErrors())
 					{
-						$items[$k]['amount']=$objAmountWidget->value;
-						$notelistModified=true;
+						$this->class = 'error';
+						$this->addError('');
+					} else {
+						if($items[$k]['amount']!=$objAmountWidget->value)
+						{
+							$items[$k]['amount']=$objAmountWidget->value;
+							$notelistModified=true;
+						}
 					}
 				}
 			}

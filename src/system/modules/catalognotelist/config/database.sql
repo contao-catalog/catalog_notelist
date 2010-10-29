@@ -14,6 +14,7 @@
 
 CREATE TABLE `tl_catalog_fields` (
   `notelistvariants` text NULL
+  `notelistselamount` char(1) NOT NULL default '',
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 
