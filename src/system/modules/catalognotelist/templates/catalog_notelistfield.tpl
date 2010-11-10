@@ -29,6 +29,8 @@
 <?php if($this->amount): ?>
 <?php echo $this->amount; ?>
 <?php endif; ?>
+<?php if($this->amount || $this->variants): ?>
 <input type="submit" class="submit" value="<?php echo $this->addSumbit; ?>" />
+<?php endif; ?>
 </div>
 </form>

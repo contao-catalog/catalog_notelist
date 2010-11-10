@@ -268,9 +268,12 @@ class FormCatalogNoteList extends Widget
 		foreach($items as $k=>$item)
 		{
 			$widgetBaseId=$this->strId.'_'.$item['id'];
-			foreach($item['variants'] as $variantId=>$variant)
+			if(is_array($item['variants']))
 			{
-				$widgetBaseId.='_'.$variant['id'];
+				foreach($item['variants'] as $variantId=>$variant)
+				{
+					$widgetBaseId.='_'.$variant['id'];
+				}
 			}
 			$id=$widgetBaseId.'_remove';
 			if($this->Input->post($id))
