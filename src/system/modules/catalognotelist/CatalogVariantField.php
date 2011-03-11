@@ -62,6 +62,7 @@ class CatalogVariantField extends Frontend
 		while($objVariantValues->next())
 		{
 			$items['variants'][$objVariantValues->colName]['colmeta']=$objVariantValues->row();
+			// TODO: sort by itemSortCol here - see issue #215
 			$objOptions=$this->Database->prepare('SELECT * FROM '.$objVariantValues->itemTable.' WHERE FIND_IN_SET(id, (SELECT '.$objVariantValues->colName.' FROM '.$objFieldConf->tableName.' WHERE id=?))>0')->execute($objCatalog->id);
 			if($objOptions->numRows)
 			{
@@ -100,7 +101,7 @@ class CatalogVariantField extends Frontend
 		}
 
 		$this->Template->variants=$items['variants'];
-		if($this->notelistselamount)
+		if($objFieldConf->notelistselamount)
 		{
 			// amount widget
 			$id=$formid.'_amount';
