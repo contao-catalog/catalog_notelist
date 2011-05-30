@@ -62,8 +62,8 @@ class CatalogVariantField extends Frontend
 		while($objVariantValues->next())
 		{
 			$items['variants'][$objVariantValues->colName]['colmeta']=$objVariantValues->row();
-			// TODO: sort by itemSortCol here - see issue #215
-			$objOptions=$this->Database->prepare('SELECT * FROM '.$objVariantValues->itemTable.' WHERE FIND_IN_SET(id, (SELECT '.$objVariantValues->colName.' FROM '.$objFieldConf->tableName.' WHERE id=?))>0')->execute($objCatalog->id);
+			// DONE: sort by itemSortCol here - see issue #215
+			$objOptions=$this->Database->prepare('SELECT * FROM '.$objVariantValues->itemTable.' WHERE FIND_IN_SET(id, (SELECT '.$objVariantValues->colName.' FROM '.$objFieldConf->tableName.' WHERE id=?))>0'.($objVariantValues->itemSortCol?' ORDER BY '.$objVariantValues->itemSortCol:''))->execute($objCatalog->id);
 			if($objOptions->numRows)
 			{
 				$options=array(0 => array('id' => 0, 'NOTELIST_VALUE' => $GLOBALS['TL_LANG']['notelistvariants']['emptyLabel']));
