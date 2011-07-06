@@ -17,11 +17,13 @@
 <input type="hidden" name="catid" value="<?php echo $this->catid; ?>" />
 <input type="hidden" name="itemid" value="<?php echo $this->itemid; ?>" />
 <div class="notelistvariants">
+<?php if($this->variants): ?>
 <?php foreach($this->variants as $variant): ?>
 <?php if($variant['optioncount']): ?>
 <?php echo $variant['widget']; ?>
 <?php endif; ?>
 <?php endforeach; ?>
+<?php endif; ?>
 <?php if($this->description): ?>
 <?php echo $this->description; ?>
 <?php endif; ?>

@@ -14,9 +14,11 @@
 <?php foreach($item['fields'] as $k=>$field): ?>
 <?php echo $field['title']; ?>: <?php echo $field['value']['raw']; ?> 
 <?php endforeach; ?>
+<?php if($item['variants']): ?>
 <?php foreach($item['variants'] as $k=>$variant): ?>
 
 <?php echo $variant['title']; ?>: <?php echo $variant['name']; ?>
 
 <?php endforeach; ?>
+<?php endif; ?>
 <?php endforeach; ?>
