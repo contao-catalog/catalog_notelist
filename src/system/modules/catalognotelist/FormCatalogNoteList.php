@@ -103,11 +103,6 @@ class InternalModuleCatalogNotelist extends ModuleCatalog
 		return $arrCatalog;
 	}
 
-	public function replaceCatalogTags($strValue, $arrCatalog)
-	{
-		return parent::replaceCatalogTags($strValue, $arrCatalog);
-	}
-
 	public function tableName()
 	{
 		return $this->strTable;
