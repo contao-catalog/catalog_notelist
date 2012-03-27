@@ -14,6 +14,7 @@
 <form method="post" id="<?php echo $this->formid; ?>" action="<?php echo $this->action; ?>">	
 <div class="addtonotelist">
 <input type="hidden" name="FORM_SUBMIT" value="<?php echo $this->formid; ?>" />
+<input type="hidden" name="REQUEST_TOKEN" value="{{request_token}}" />
 <input type="hidden" name="catid" value="<?php echo $this->catid; ?>" />
 <input type="hidden" name="itemid" value="<?php echo $this->itemid; ?>" />
 <div class="notelistvariants">
